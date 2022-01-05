@@ -6,8 +6,6 @@ const style = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderTopWidth: 0.5,
-    borderBottomWidth: 0.5,
   },
 });
 
