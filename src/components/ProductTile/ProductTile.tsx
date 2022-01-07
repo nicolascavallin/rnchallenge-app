@@ -1,42 +1,142 @@
-import React, { FC } from "react";
-import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { FC, useState } from "react";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import Animated, {
+  CurvedTransition,
+  FadeInUp,
+  FadeOut,
+} from "react-native-reanimated";
+import { Product } from "../../contexts/AppContext/types";
 
 const style = StyleSheet.create({
   container: {
     flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    padding: 8,
+
+    marginHorizontal: 16,
+    marginVertical: 4,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    shadowColor: "#0000000D",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+    borderColor: "#0C1A4B1A",
+    borderWidth: 1,
   },
 });
 
-interface ProductTileProps {}
+interface ProductTileProps {
+  data: Product;
+  index: number;
+}
 
-const ProductTile: FC<ProductTileProps> = ({ children }) => {
+const ProductTile: FC<ProductTileProps> = ({ data, index }) => {
   //
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <TouchableOpacity style={style.container}>
-      <Image
-        source={{
-          uri: "https://rg.dutyfreeshopatlanticosur.com/media/catalog/product/cache/7c9e7eea87f55c85e452c480e14505af/1/9/199253_1.jpg",
-        }}
-        resizeMode="cover"
-        style={{
-          width: 72,
-          height: 72,
-          borderRadius: 8,
-        }}
-      />
-      <View style={{ flex: 1, marginLeft: 12 }}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <View>
-            <Text>Apple</Text>
-            <Text>iPhone 7</Text>
-          </View>
-          <Text>$120</Text>
+    <Animated.View
+      key={data.id}
+      entering={FadeInUp.delay(60 * index)}
+      exiting={FadeOut}
+      layout={CurvedTransition}
+    >
+      <TouchableOpacity activeOpacity={0.5} style={style.container}>
+        <View>
+          <Image
+            source={{
+              uri: data.imageFileName,
+            }}
+            resizeMode="cover"
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: 4,
+            }}
+            onLoad={() => setImageLoaded(true)}
+          />
+          {!imageLoaded ? (
+            <View
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: 4,
+                backgroundColor: "#EFEFEF",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "absolute",
+              }}
+            >
+              <ActivityIndicator />
+            </View>
+          ) : null}
         </View>
-      </View>
-    </TouchableOpacity>
+        <View style={{ flex: 1, marginLeft: 12 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              flex: 1,
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "space-evenly",
+              }}
+            >
+              <Text
+                numberOfLines={1}
+                style={{
+                  fontFamily: "Spartan_600SemiBold",
+                  color: "#00000080",
+                  fontSize: 11,
+                }}
+              >
+                {data.manufacturer}
+              </Text>
+              <Text
+                numberOfLines={1}
+                style={{
+                  fontFamily: "Spartan_600SemiBold",
+                  color: "#000000",
+                  fontSize: 18,
+                }}
+              >
+                {data.name}
+              </Text>
+            </View>
+            <Text
+              style={{
+                fontFamily: "Spartan_500Medium",
+                marginTop: 8,
+                fontSize: 15,
+                color: "#FC6828",
+              }}
+            >
+              {data.price.toLocaleString("es", {
+                style: "currency",
+                maximumFractionDigits: 0,
+                currency: "EUR",
+                useGrouping: true,
+              })}
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
