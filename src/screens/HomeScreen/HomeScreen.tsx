@@ -40,15 +40,19 @@ const HomeScreen: FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.root}>
-      {status === "loading" ? (
-        <ActivityIndicator
-          style={{ alignSelf: "center", paddingTop: 16 }}
-          color="gray"
-        />
-      ) : null}
       <FlatList
         contentContainerStyle={{ paddingTop: 16 }}
         data={products}
+        ListHeaderComponent={() => {
+          return status === "loading" ? (
+            <ActivityIndicator
+              style={{ alignSelf: "center", paddingTop: 16 }}
+              color="gray"
+            />
+          ) : (
+            <View />
+          );
+        }}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ListFooterComponent={() =>

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "challenge-app",
-    "slug": "challenge-app",
+    "name": "Challenge",
+    "slug": "rnchallenge",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,13 +15,17 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "test.nicolas.rnchallenge",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "test.nicolas.rnchallenge",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +37,8 @@
           "photosPermission": "We need access to your photos to add them to your products."
         }
       ]
-    ]
+    ],
+    "description": "",
+    "githubUrl": "https://github.com/nicolascavallin/rnchallenge-app"
   }
 }
