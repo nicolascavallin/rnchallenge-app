@@ -1,3 +1,8 @@
+import {
+  CompositeNavigationProp,
+  useNavigation,
+} from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import React, { FC, useState } from "react";
 import {
   Image,
@@ -12,13 +17,13 @@ import Animated, {
   FadeInUp,
   FadeOut,
 } from "react-native-reanimated";
+import { StackRoutesParams } from "../../../App";
 import { Product } from "../../contexts/AppContext/types";
 
 const style = StyleSheet.create({
   container: {
     flexDirection: "row",
     padding: 8,
-
     marginHorizontal: 16,
     marginVertical: 4,
     backgroundColor: "#FFFFFF",
@@ -30,12 +35,13 @@ const style = StyleSheet.create({
     },
     shadowOpacity: 1,
     shadowRadius: 2.22,
-
     elevation: 3,
     borderColor: "#0C1A4B1A",
     borderWidth: 1,
   },
 });
+
+type NavigationProps = StackNavigationProp<StackRoutesParams>;
 
 interface ProductTileProps {
   data: Product;
@@ -44,6 +50,8 @@ interface ProductTileProps {
 
 const ProductTile: FC<ProductTileProps> = ({ data, index }) => {
   //
+  const { navigate } = useNavigation<NavigationProps>();
+
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
@@ -53,7 +61,11 @@ const ProductTile: FC<ProductTileProps> = ({ data, index }) => {
       exiting={FadeOut}
       layout={CurvedTransition}
     >
-      <TouchableOpacity activeOpacity={0.5} style={style.container}>
+      <TouchableOpacity
+        onPress={() => navigate("Product", { data })}
+        activeOpacity={0.5}
+        style={style.container}
+      >
         <View>
           <Image
             source={{
@@ -79,45 +91,35 @@ const ProductTile: FC<ProductTileProps> = ({ data, index }) => {
                 position: "absolute",
               }}
             >
-              <ActivityIndicator />
+              <ActivityIndicator color="gray" />
             </View>
           ) : null}
         </View>
-        <View style={{ flex: 1, marginLeft: 12 }}>
+
+        <View
+          style={{
+            justifyContent: "space-evenly",
+            flex: 1,
+            marginLeft: 12,
+          }}
+        >
           <View
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-              flex: 1,
+              alignItems: "center",
             }}
           >
-            <View
+            <Text
+              numberOfLines={1}
               style={{
-                flex: 1,
-                justifyContent: "space-evenly",
+                fontFamily: "Spartan_600SemiBold",
+                color: "#00000080",
+                fontSize: 11,
               }}
             >
-              <Text
-                numberOfLines={1}
-                style={{
-                  fontFamily: "Spartan_600SemiBold",
-                  color: "#00000080",
-                  fontSize: 11,
-                }}
-              >
-                {data.manufacturer}
-              </Text>
-              <Text
-                numberOfLines={1}
-                style={{
-                  fontFamily: "Spartan_600SemiBold",
-                  color: "#000000",
-                  fontSize: 18,
-                }}
-              >
-                {data.name}
-              </Text>
-            </View>
+              {data.manufacturer}
+            </Text>
             <Text
               style={{
                 fontFamily: "Spartan_500Medium",
@@ -126,14 +128,25 @@ const ProductTile: FC<ProductTileProps> = ({ data, index }) => {
                 color: "#FC6828",
               }}
             >
-              {data.price.toLocaleString("es", {
+              {new Intl.NumberFormat("es", {
                 style: "currency",
-                maximumFractionDigits: 0,
                 currency: "EUR",
                 useGrouping: true,
-              })}
+                maximumFractionDigits: 0,
+                minimumFractionDigits: 0,
+              }).format(data.price)}
             </Text>
           </View>
+          <Text
+            numberOfLines={1}
+            style={{
+              fontFamily: "Spartan_600SemiBold",
+              color: "#000000",
+              fontSize: 18,
+            }}
+          >
+            {data.name}
+          </Text>
         </View>
       </TouchableOpacity>
     </Animated.View>

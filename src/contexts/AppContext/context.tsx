@@ -12,13 +12,12 @@ const AppProvider: FC = ({ children }) => {
   const [status, setStatus] = useState<Status>("loading");
 
   useEffect(() => {
-    console.log("holi");
     api
       .getProducts()
       .then((res) => {
         if (res.success) {
-          setStatus("ready");
           setProducts(res.payload);
+          setStatus("ready");
         } else {
           setStatus("error");
         }
@@ -26,15 +25,70 @@ const AppProvider: FC = ({ children }) => {
       .catch((x) => setStatus("error"));
     return () => {
       //   cleanup
-      setStatus("loading");
     };
   }, []);
+
+  const postProduct = async (data: {
+    id?: string;
+    name: string;
+    ram: string;
+    description: string;
+    price: number;
+    color: string;
+    screen: string;
+    manufacturer: string;
+    imageFileName: string;
+    processor: string;
+  }): Promise<Product | null> =>
+    api
+      .postProduct(data)
+      .then((res) => {
+        //
+        const { payload }: { payload: Product } = res;
+
+        setProducts((prods) => {
+          const clone = [...prods];
+          const index = clone.findIndex((x) => x.id === payload.id);
+          if (index > -1) {
+            clone.splice(index, 1, { ...payload });
+            return clone;
+          } else {
+            return [{ ...payload }, ...clone];
+          }
+        });
+
+        return { ...payload };
+      })
+      .catch((_) => null);
+
+  const removeProduct = async (id: string): Promise<boolean> =>
+    api.removeProduct(id).then((res) => {
+      if (res.success) {
+        setProducts((prods) => {
+          const clone = [...prods];
+          const index = clone.findIndex((x) => x.id === id);
+          if (index > -1) {
+            clone.splice(index, 1);
+            return clone;
+          } else {
+            return clone;
+          }
+        });
+
+        return true;
+      } else {
+        return false;
+      }
+    });
 
   const state = {
     status,
     products,
   };
-  const actions = {};
+  const actions = {
+    postProduct,
+    removeProduct,
+  };
 
   return (
     <AppContext.Provider value={{ state, actions }}>
